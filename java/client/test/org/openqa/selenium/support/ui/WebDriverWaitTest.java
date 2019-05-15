@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import org.junit.Before;
+import org.junit.Ignore; // MOE:strip_line
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -44,6 +45,7 @@ import org.openqa.selenium.remote.Response;
 import org.openqa.selenium.remote.SessionId;
 
 import java.io.IOException;
+import java.time.Duration;
 
 public class WebDriverWaitTest {
 
@@ -56,6 +58,7 @@ public class WebDriverWaitTest {
   }
 
   @Test
+  @Ignore // MOE:strip_line
   public void shouldIncludeRemoteInfoForWrappedDriverTimeout() throws IOException {
     Capabilities caps = new MutableCapabilities();
     Response response = new Response(new SessionId("foo"));
@@ -68,7 +71,8 @@ public class WebDriverWaitTest {
     when(((WrapsDriver) testDriver).getWrappedDriver()).thenReturn(driver);
 
     TickingClock clock = new TickingClock();
-    WebDriverWait wait = new WebDriverWait(testDriver, clock, clock, 1, 200);
+    WebDriverWait wait =
+        new WebDriverWait(testDriver, Duration.ofSeconds(1), Duration.ofMillis(200), clock, clock);
 
     assertThatExceptionOfType(TimeoutException.class)
         .isThrownBy(() -> wait.until((d) -> false))
@@ -79,7 +83,8 @@ public class WebDriverWaitTest {
   @Test
   public void shouldThrowAnExceptionIfTheTimerRunsOut() {
     TickingClock clock = new TickingClock();
-    WebDriverWait wait = new WebDriverWait(mockDriver, clock, clock, 1, 200);
+    WebDriverWait wait =
+        new WebDriverWait(mockDriver, Duration.ofSeconds(1), Duration.ofMillis(200), clock, clock);
 
     assertThatExceptionOfType(TimeoutException.class)
         .isThrownBy(() -> wait.until((d) -> false));
@@ -94,7 +99,8 @@ public class WebDriverWaitTest {
         .thenReturn(mockElement);
 
     TickingClock clock = new TickingClock();
-    Wait<WebDriver> wait = new WebDriverWait(mockDriver, clock, clock, 5, 500);
+    Wait<WebDriver> wait =
+        new WebDriverWait(mockDriver, Duration.ofSeconds(5), Duration.ofMillis(500), clock, clock);
     assertThat(wait.until(condition)).isSameAs(mockElement);
   }
 
@@ -107,7 +113,8 @@ public class WebDriverWaitTest {
         .thenReturn(mockElement);
 
     TickingClock clock = new TickingClock();
-    Wait<WebDriver> wait = new WebDriverWait(mockDriver, clock, clock, 5, 500);
+    Wait<WebDriver> wait =
+        new WebDriverWait(mockDriver, Duration.ofSeconds(5), Duration.ofMillis(500), clock, clock);
     wait.until(condition);
   }
 
@@ -121,7 +128,8 @@ public class WebDriverWaitTest {
         .thenReturn(mockElement);
 
     TickingClock clock = new TickingClock();
-    Wait<WebDriver> wait = new WebDriverWait(mockDriver, clock, clock, 5, 500);
+    Wait<WebDriver> wait =
+        new WebDriverWait(mockDriver, Duration.ofSeconds(5), Duration.ofMillis(500), clock, clock);
     wait.until(condition);
   }
 }
